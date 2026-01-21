@@ -1,7 +1,5 @@
 # wxauto API 配置文件
 
-package: "wxautox"
-
 # 服务器配置
 server:
   host: "0.0.0.0"  # 服务器监听地址

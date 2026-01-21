@@ -6,14 +6,14 @@ from app.api.v1 import wechat, chat, apps, files, info
 from app.utils.auth import get_current_token
 from app.models.response import APIResponse
 from app.utils.config import settings
-from app.utils.wx_package_manager import is_wxautox, get_supported_features
+from app.utils.wx_package_manager import get_supported_features
 from typing import Any, Dict
 from fastapi.responses import HTMLResponse
 
 app = FastAPI(
     title="WXAuto API",
-    description="微信自动化API服务，✨标识为plus版本特有接口",
-    version="1.0.0",
+    description="微信自动化API服务，统一使用 wxautox4",
+    version="2.0.0",
     docs_url=None,  # 禁用默认文档，使用自定义
     redoc_url=None,  # 禁用默认ReDoc，使用自定义
     openapi_url=settings.api.openapi_url
@@ -70,19 +70,19 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 @app.get("/")
 async def root():
     """根路径
-    
+
     Returns:
         dict: 欢迎信息和包信息
     """
     package_info = {
-        "message": "欢迎使用WXAuto API",
-        "package": settings.package,
-        "version": "Plus版" if is_wxautox() else "开源版",
-        "description": "wxauto Plus版，功能更丰富" if is_wxautox() else "wxauto开源版，基础功能",
+        "message": "wxauto API",
+        "package": "wxautox4",
+        "version": "Plus版",
+        "description": "wxautox4 Plus版，功能丰富",
         "features_count": len(get_supported_features()),
         "docs_url": f"http://{settings.server.host}:{settings.server.port}{settings.api.docs_url}"
     }
-    
+
     return package_info
 
 # 注册路由，添加认证依赖

@@ -1,4 +1,4 @@
-from app.utils.wx_package_manager import get_wx_class, has_feature, is_wxautox
+from app.utils.wx_package_manager import get_wx_class
 from pythoncom import CoInitialize
 from typing import Optional, List
 from app.models.response import APIResponse
@@ -20,10 +20,10 @@ def accept_single_friend(new, keywords, remark, tags):
         'new_message': newmsg,
         'new_nickname': newname,
         'new_account': '',
-        'accept': False 
+        'accept': False
     }
     if any(keyword in newmsg for keyword in keywords):
-        new_remark = f"{remark}_{int(time.strftime('%y%m%d%H%M%S'))}" 
+        new_remark = f"{remark}_{int(time.strftime('%y%m%d%H%M%S'))}"
         new.accept(remark=new_remark, tags=tags)
         account = new.get_account()
         result['accept'] = True
@@ -38,8 +38,6 @@ def accept_new_friend(
         tags: List[str] = []
     ) -> APIResponse:
     """接受新朋友"""
-    if not has_feature("accept_new_friend"):
-        return APIResponse(success=False, message="此功能需要wxautox版本支持")
     try:
         result = []
         new_friends = wx.GetNewFriends()

@@ -1,4 +1,3 @@
-from app.utils.wx_package_manager import has_feature
 from typing import Optional, Union, List
 from app.models.response import APIResponse
 from app.services.file_service import FileService
@@ -152,7 +151,7 @@ class WeChatService:
         except Exception as e:
             return APIResponse(success=False, message=str(e))
 
-    # wxautox特有功能
+    # wxautox4特有功能
     def send_url_card(
             self,
             url: str,
@@ -160,10 +159,7 @@ class WeChatService:
             timeout: int = 10,
             wxname: Optional[str] = None
         ) -> APIResponse:
-        """发送URL卡片（wxautox特有）"""
-        if not has_feature("send_url_card"):
-            return APIResponse(success=False, message="此功能需要wxautox版本支持")
-        
+        """发送URL卡片"""
         try:
             wx = get_wechat(wxname)
             result = wx.SendUrlCard(url=url, friends=friends, timeout=timeout)
@@ -231,10 +227,7 @@ class WeChatService:
             acceptable: bool = True,
             wxname: Optional[str] = None
         ) -> APIResponse:
-        """获取新朋友（wxautox特有）"""
-        if not has_feature("get_new_friends"):
-            return APIResponse(success=False, message="此功能需要wxautox版本支持")
-        
+        """获取新朋友"""
         try:
             wx = get_wechat(wxname)
             result = wx.GetNewFriends(acceptable=acceptable)
@@ -249,10 +242,7 @@ class WeChatService:
             tags: List[str] = [],
             wxname: Optional[str] = None
         ) -> APIResponse:
-        """接受新朋友（wxautox特有）"""
-        if not has_feature("accept_new_friend"):
-            return APIResponse(success=False, message="此功能需要wxautox版本支持")
-        
+        """接受新朋友"""
         try:
             wx = get_wechat(wxname)
             result = wx.AcceptNewFriend(new_friend_id=new_friend_id, remark=remark, tags=tags)
@@ -264,10 +254,7 @@ class WeChatService:
             self,
             wxname: Optional[str] = None
         ) -> APIResponse:
-        """切换到聊天页面（wxautox特有）"""
-        if not has_feature("switch_to_chat_page"):
-            return APIResponse(success=False, message="此功能需要wxautox版本支持")
-        
+        """切换到聊天页面"""
         try:
             wx = get_wechat(wxname)
             result = wx.SwitchToChat()
@@ -279,10 +266,7 @@ class WeChatService:
             self,
             wxname: Optional[str] = None
         ) -> APIResponse:
-        """切换到联系人页面（wxautox特有）"""
-        if not has_feature("switch_to_contact_page"):
-            return APIResponse(success=False, message="此功能需要wxautox版本支持")
-        
+        """切换到联系人页面"""
         try:
             wx = get_wechat(wxname)
             result = wx.SwitchToContactPage()
@@ -294,9 +278,7 @@ class WeChatService:
             self,
             wxname: Optional[str] = None
         ) -> APIResponse:
-        if not has_feature("is_online"):
-            return APIResponse(success=False, message="此功能需要wxautox版本支持")
-        
+        """检查微信是否在线"""
         try:
             wx = get_wechat(wxname)
             result = wx.IsOnline()

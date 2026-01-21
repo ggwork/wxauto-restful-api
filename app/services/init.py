@@ -1,10 +1,4 @@
-from app.utils.wx_package_manager import (
-    wx_manager,
-    get_wx_class, 
-    get_wx_function, 
-    has_feature, 
-    is_wxautox
-)
+from app.utils.wx_package_manager import wx_manager, get_wx_class, get_wx_function
 from pythoncom import CoInitialize
 
 
@@ -21,12 +15,11 @@ except:
 # 初始化COM
 CoInitialize()
 
-# 如果是wxautox版本，导入额外模块
-if is_wxautox():
-    try:
-        WxResponse = wx_manager.package.param.WxResponse
-    except Exception as e:
-        print(f"警告：无法导入WxResponse: {e}")
+# 导入 wxautox4 额外模块
+try:
+    WxResponse = wx_manager.package.param.WxResponse
+except Exception as e:
+    print(f"警告：无法导入WxResponse: {e}")
 
 # 获取微信客户端
 try:

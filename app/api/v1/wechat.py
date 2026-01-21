@@ -2,17 +2,6 @@ from fastapi import APIRouter, Request, Depends
 from app.services.wechat_service import WeChatService
 from app.models.request.wechat import *
 from app.models.response import APIResponse
-from app.utils.route_condition import (
-    require_wxautox, 
-    require_feature, 
-    conditional_route, 
-    has_url_card_feature, 
-    has_listen_chat_feature, 
-    has_new_message_feature, 
-    has_quote_message_feature, 
-    has_friend_management_feature, 
-    has_page_switch_feature
-)
 from typing import Dict, Any
 import asyncio
 
@@ -102,17 +91,16 @@ async def get_all_message(
     return service.get_all_message(who=request.who, wxname=request.wxname)
 
 @router.post(
-    "/sendurlcard", 
-    operation_id="[wx]发送url卡片", 
-    response_model=APIResponse, 
+    "/sendurlcard",
+    operation_id="[wx]发送url卡片",
+    response_model=APIResponse,
     summary='✨发送url卡片'
 )
-@conditional_route(has_url_card_feature)
 async def send_url_card(
     request: SendUrlCardRequest,
     service: WeChatService = Depends()
 ):
-    """微信发送url卡片（wxautox特有）"""
+    """微信发送url卡片"""
     return service.send_url_card(
         url=request.url,
         friends=request.friends,
@@ -171,48 +159,46 @@ async def send_quote_by_id(
     )
 
 @router.post(
-    "/getnewfriends", 
-    operation_id="[wx]获取好友申请", 
+    "/getnewfriends",
+    operation_id="[wx]获取好友申请",
     response_model=APIResponse,
     summary='✨获取好友申请列表'
 )
-@conditional_route(has_friend_management_feature)
 async def get_new_friends(
     request: GetNewFriendsRequest,
     service: WeChatService = Depends()
 ):
-    """获取微信新朋友（wxautox特有）"""
+    """获取微信新朋友"""
     return service.get_new_friends(
         acceptable=request.acceptable,
         wxname=request.wxname
     )
 
 @router.post(
-    "/newfriend/accept", 
-    operation_id="[wx]接受好友申请", 
+    "/newfriend/accept",
+    operation_id="[wx]接受好友申请",
     response_model=APIResponse,
     summary='✨接受好友申请'
 )
-@conditional_route(has_friend_management_feature)
 async def accept_new_friend(
     request: AcceptNewFriendRequest,
     service: WeChatService = Depends()
 ):
-    """接受微信新朋友（wxautox特有）"""
+    """接受微信新朋友"""
     if isinstance(request.tags, str):
         tags = [request.tags]
     else:
         tags = request.tags
     return service.accept_new_friend(
-        new_friend_id=request.new_friend_id, 
-        remark=request.remark, 
-        tags=tags, 
+        new_friend_id=request.new_friend_id,
+        remark=request.remark,
+        tags=tags,
         wxname=request.wxname
     )
 
 @router.post(
-    "/switch/chat", 
-    operation_id="[wx]切换到聊天页面", 
+    "/switch/chat",
+    operation_id="[wx]切换到聊天页面",
     response_model=APIResponse,
     summary="主窗口切换到聊天页面"
 )
@@ -220,12 +206,12 @@ async def switch_to_chat_page(
     request: SwitchToChatPageRequest,
     service: WeChatService = Depends()
 ):
-    """切换到聊天页面（wxautox特有）"""
+    """切换到聊天页面"""
     return service.switch_to_chat_page(wxname=request.wxname)
 
 @router.post(
-    "/isonline", 
-    operation_id="[wx]是否在线（掉线）", 
+    "/isonline",
+    operation_id="[wx]是否在线（掉线）",
     response_model=APIResponse,
     summary="✨微信是否在线（掉线）"
 )
@@ -233,7 +219,7 @@ async def is_online(
     request: IsOnlineRequest,
     service: WeChatService = Depends()
 ):
-    """微信是否在线（wxautox特有）"""
+    """微信是否在线"""
     return service.is_online(wxname=request.wxname)
 
 # @router.post("/switch/contact", operation_id="[wx]切换到联系人页面", response_model=APIResponse)
