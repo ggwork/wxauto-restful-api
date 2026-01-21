@@ -47,19 +47,21 @@ class WeChatService:
         return cls._instance
 
     def send_message(
-            self, 
+            self,
             msg: str,
-            who: Optional[str] = None, 
-            clear: bool = True, 
-            at: Optional[str | list] = None, 
-            exact: bool = False, 
+            who: Optional[str] = None,
+            clear: bool = True,
+            at: Optional[str | list] = None,
+            exact: bool = False,
             wxname: Optional[str] = None
         ) -> APIResponse:
         """发送消息"""
         try:
             wx = get_wechat(wxname)
             result = wx.SendMsg(msg=msg, who=who, clear=clear, at=at, exact=exact)
-            return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+            # 处理 message 可能为 None 的情况
+            message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message=message, data=result.get('data'))
         except Exception as e:
             return APIResponse(success=False, message=str(e))
 
@@ -163,7 +165,8 @@ class WeChatService:
         try:
             wx = get_wechat(wxname)
             result = wx.SendUrlCard(url=url, friends=friends, timeout=timeout)
-            return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+            message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message=message, data=result.get('data'))
         except Exception as e:
             return APIResponse(success=False, message=str(e))
         
@@ -214,11 +217,12 @@ class WeChatService:
             if (msg := wx.GetMessageById(msg_id)) is not None:
                 if isinstance(msg, HumanMessage):
                     result = msg.quote(text=content)
-                    return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+                    message = result.get('message') or '操作成功'
+                    return APIResponse(success=bool(result), message=message, data=result.get('data'))
                 else:
                     return APIResponse(success=False, message=f'当前消息不可引用(消息类型："{msg.type}"  内容："{msg.content}")')
             else:
-                return APIResponse(success=False, message=f"消息不存在：{msg_id}")    
+                return APIResponse(success=False, message=f"消息不存在：{msg_id}")
         except Exception as e:
             return APIResponse(success=False, message=str(e))
 
@@ -246,7 +250,8 @@ class WeChatService:
         try:
             wx = get_wechat(wxname)
             result = wx.AcceptNewFriend(new_friend_id=new_friend_id, remark=remark, tags=tags)
-            return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+            message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message=message, data=result.get('data'))
         except Exception as e:
             return APIResponse(success=False, message=str(e))
 
@@ -258,7 +263,8 @@ class WeChatService:
         try:
             wx = get_wechat(wxname)
             result = wx.SwitchToChat()
-            return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+            message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message=message, data=result.get('data'))
         except Exception as e:
             return APIResponse(success=False, message=str(e))
 
@@ -270,7 +276,8 @@ class WeChatService:
         try:
             wx = get_wechat(wxname)
             result = wx.SwitchToContactPage()
-            return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+            message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message=message, data=result.get('data'))
         except Exception as e:
             return APIResponse(success=False, message=str(e))
         

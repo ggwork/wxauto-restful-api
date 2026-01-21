@@ -35,7 +35,8 @@ class ChatService:
         subwin = get_wechat_subwin(wxname, who)
         if subwin:
             result = subwin.SendMsg(msg=msg, clear=clear, at=at)
-            return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+            message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message=message, data=result.get('data'))
         else:
             return APIResponse(success=False, message='找不到该聊天窗口')
         
@@ -88,7 +89,8 @@ class ChatService:
         msg = self._get_msg_by_id(msg_id, who, wxname)
         if msg and msg.attr in ('self', 'friend'):
             result = msg.quote(content)
-            return APIResponse(success=bool(result), message=result['message'], data=result['data'])
+            message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message=message, data=result.get('data'))
         else:
             return APIResponse(success=False, message='找不到消息')
 

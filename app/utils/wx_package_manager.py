@@ -20,7 +20,7 @@ class WxPackageManager:
     def _load_package(self) -> None:
         """加载 wxautox4 包"""
         try:
-            self._package = importlib.import_module("wxautox")
+            self._package = importlib.import_module("wxautox4")
             # 检查 license
             if self._package.utils.useful.check_license():
                 logger.info("已加载 wxautox4 包")
