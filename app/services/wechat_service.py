@@ -4,22 +4,65 @@ from app.services.file_service import FileService
 from .init import WeChat, WxClient, Chat, HumanMessage
 import os
 
+def check_wechat_alive(wx: WeChat) -> bool:
+    """检查微信实例是否有效
+
+    Args:
+        wx: WeChat实例
+
+    Returns:
+        bool: 实例是否有效
+    """
+    try:
+        # 尝试访问一个简单的属性来检查实例是否有效
+        _ = wx._who
+        return True
+    except Exception:
+        return False
+
 def get_wechat(wxname: str) -> WeChat:
-    """获取微信实例
-    
+    """获取微信实例（带缓存和健康检查）
+
     Args:
         wxname: 微信客户端名称
-        
+
     Returns:
         WeChat实例
     """
-    if (not wxname) and WxClient:
-        wx = list(WxClient.values())[0]
-    elif wxname in WxClient:
+    # 如果没有指定 wxname，使用第一个缓存的实例
+    if not wxname:
+        if WxClient:
+            # 获取第一个有效的实例
+            for cached_wx in WxClient.values():
+                if check_wechat_alive(cached_wx):
+                    return cached_wx
+            # 如果没有有效实例，创建新的
+            wx = WeChat()
+            WxClient[wx.nickname] = wx
+            return wx
+        else:
+            # 缓存为空，创建新实例
+            wx = WeChat()
+            WxClient[wx.nickname] = wx
+            return wx
+
+    # 如果指定了 wxname
+    if wxname in WxClient:
         wx = WxClient[wxname]
+        # 检查缓存的实例是否有效
+        if check_wechat_alive(wx):
+            return wx
+        else:
+            # 实例已失效，重新创建
+            print(f"微信实例 {wxname} 已失效，重新创建")
+            wx = WeChat(nickname=wxname)
+            WxClient[wxname] = wx
+            return wx
     else:
+        # 缓存中没有，创建新实例并缓存
         wx = WeChat(nickname=wxname)
-    return wx
+        WxClient[wxname] = wx
+        return wx
 
 def get_wechat_subwin(wxname: str, who: str) -> Optional[Chat]:
     """获取微信子窗口

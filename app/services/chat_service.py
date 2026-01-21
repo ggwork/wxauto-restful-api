@@ -1,17 +1,44 @@
 from typing import Optional
 from app.models.response import APIResponse
-from .wechat_service import get_wechat_subwin
+from .wechat_service import get_wechat_subwin, check_wechat_alive
 from .init import WeChat, WxClient
 
 def get_wechat(wxname: str) -> 'WeChat':
-    """获取微信实例"""
-    if (not wxname) and WxClient:
-        wx = list(WxClient.values())[0]
-    elif wxname in WxClient:
+    """获取微信实例（带缓存和健康检查）"""
+    # 如果没有指定 wxname，使用第一个缓存的实例
+    if not wxname:
+        if WxClient:
+            # 获取第一个有效的实例
+            for cached_wx in WxClient.values():
+                if check_wechat_alive(cached_wx):
+                    return cached_wx
+            # 如果没有有效实例，创建新的
+            wx = WeChat()
+            WxClient[wx.nickname] = wx
+            return wx
+        else:
+            # 缓存为空，创建新实例
+            wx = WeChat()
+            WxClient[wx.nickname] = wx
+            return wx
+
+    # 如果指定了 wxname
+    if wxname in WxClient:
         wx = WxClient[wxname]
+        # 检查缓存的实例是否有效
+        if check_wechat_alive(wx):
+            return wx
+        else:
+            # 实例已失效，重新创建
+            print(f"微信实例 {wxname} 已失效，重新创建")
+            wx = WeChat(nickname=wxname)
+            WxClient[wxname] = wx
+            return wx
     else:
+        # 缓存中没有，创建新实例并缓存
         wx = WeChat(nickname=wxname)
-    return wx
+        WxClient[wxname] = wx
+        return wx
 
 class ChatService:
     _instance = None
