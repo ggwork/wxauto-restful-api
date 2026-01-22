@@ -78,7 +78,7 @@ async def root():
         "message": "wxauto API",
         "package": "wxautox4",
         "version": "Plus版",
-        "description": "wxautox4 Plus版，功能丰富",
+        "description": "wxautox4 Plus版",
         "features_count": len(get_supported_features()),
         "docs_url": f"http://{settings.server.host}:{settings.server.port}{settings.api.docs_url}"
     }
@@ -87,8 +87,8 @@ async def root():
 
 # 注册路由，添加认证依赖
 app.include_router(wechat.router, prefix=f"{settings.api.prefix}/wechat", tags=["WeChat"], dependencies=[Depends(get_current_token)])
-app.include_router(chat.router, prefix=f"{settings.api.prefix}/chat", tags=["Chat"], dependencies=[Depends(get_current_token)])
-app.include_router(apps.router, prefix=f"{settings.api.prefix}/apps", tags=["Apps"], dependencies=[Depends(get_current_token)])
+# app.include_router(chat.router, prefix=f"{settings.api.prefix}/chat", tags=["Chat"], dependencies=[Depends(get_current_token)])
+# app.include_router(apps.router, prefix=f"{settings.api.prefix}/apps", tags=["Apps"], dependencies=[Depends(get_current_token)])
 app.include_router(files.router, prefix="/api/v1/files", tags=["files"])
 app.include_router(info.router, prefix=f"{settings.api.prefix}/info", tags=["Info"])
 

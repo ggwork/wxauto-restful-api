@@ -63,32 +63,32 @@ async def chat_with(
     )
     return result
 
-@router.post(
-    "/getallsubwindow", 
-    operation_id="[wx]获取所有子窗口", 
-    response_model=APIResponse,
-    summary="获取所有子窗口信息"
-)
-async def get_all_sub_window(
-    request: GetAllSubWindowRequest,
-    service: WeChatService = Depends()
-):
-    """获取微信所有子窗口信息"""
-    return service.get_all_sub_window(wxname=request.wxname)
+# @router.post(
+#     "/getallsubwindow", 
+#     operation_id="[wx]获取所有子窗口", 
+#     response_model=APIResponse,
+#     summary="获取所有子窗口信息"
+# )
+# async def get_all_sub_window(
+#     request: GetAllSubWindowRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """获取微信所有子窗口信息"""
+#     return service.get_all_sub_window(wxname=request.wxname)
 
-@router.post(
-    "/getallmessage", 
-    operation_id="[wx]获取当前窗口加载的消息", 
-    response_model=APIResponse,
-    summary='获取当前窗口加载的消息'
-)
-async def get_all_message(
-    request: GetAllMessageRequest,
-    service: WeChatService = Depends()
-):
-    """获取当前窗口加载的消息"""
-    print('xxxxxxxxxxxxxxxxxxxx')
-    return service.get_all_message(who=request.who, wxname=request.wxname)
+# @router.post(
+#     "/getallmessage", 
+#     operation_id="[wx]获取当前窗口加载的消息", 
+#     response_model=APIResponse,
+#     summary='获取当前窗口加载的消息'
+# )
+# async def get_all_message(
+#     request: GetAllMessageRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """获取当前窗口加载的消息"""
+#     print('xxxxxxxxxxxxxxxxxxxx')
+#     return service.get_all_message(who=request.who, wxname=request.wxname)
 
 @router.post(
     "/sendurlcard",
@@ -108,93 +108,93 @@ async def send_url_card(
         wxname=request.wxname
     )
 
-@router.post(
-    "/addlistenchat", 
-    operation_id="[wx]添加监听", 
-    response_model=APIResponse,
-    summary="添加监听（需和配合/chat/getnewmessage来获取新消息）"
-)
-async def add_listen_chat(
-    request: AddListenChatRequest,
-    service: WeChatService = Depends()
-):
-    """添加微信子窗口监听"""
-    return service.add_listen_chat(
-        who=request.who,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/addlistenchat", 
+#     operation_id="[wx]添加监听", 
+#     response_model=APIResponse,
+#     summary="添加监听（需和配合/chat/getnewmessage来获取新消息）"
+# )
+# async def add_listen_chat(
+#     request: AddListenChatRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """添加微信子窗口监听"""
+#     return service.add_listen_chat(
+#         who=request.who,
+#         wxname=request.wxname
+#     )
 
-@router.post(
-    "/getnextnewmessage", 
-    operation_id="[wx]获取下一个新消息", 
-    response_model=APIResponse,
-    summary="获取一个未读消息窗口的新消息"
-)
-async def get_next_new_message(
-    request: GetNextNewMessageRequest,
-    service: WeChatService = Depends()
-):
-    """获取微信下一个新消息"""
-    return service.get_next_new_message(
-        filter_mute=request.filter_mute, 
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/getnextnewmessage", 
+#     operation_id="[wx]获取下一个新消息", 
+#     response_model=APIResponse,
+#     summary="获取一个未读消息窗口的新消息"
+# )
+# async def get_next_new_message(
+#     request: GetNextNewMessageRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """获取微信下一个新消息"""
+#     return service.get_next_new_message(
+#         filter_mute=request.filter_mute, 
+#         wxname=request.wxname
+#     )
 
-@router.post(
-    "/msg/quote", 
-    operation_id="[wx]发送引用消息", 
-    response_model=APIResponse,
-    summary="根据消息id发送引用消息"
-)
-# @conditional_route(has_quote_message_feature)
-async def send_quote_by_id(
-    request: SendQuoteByIdRequest,
-    service: WeChatService = Depends()
-):
-    """根据id发送引用消息"""
-    return service.send_quote_by_id(
-        msg_id=request.msg_id,
-        content=request.content,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/msg/quote", 
+#     operation_id="[wx]发送引用消息", 
+#     response_model=APIResponse,
+#     summary="根据消息id发送引用消息"
+# )
+# # @conditional_route(has_quote_message_feature)
+# async def send_quote_by_id(
+#     request: SendQuoteByIdRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """根据id发送引用消息"""
+#     return service.send_quote_by_id(
+#         msg_id=request.msg_id,
+#         content=request.content,
+#         wxname=request.wxname
+#     )
 
-@router.post(
-    "/getnewfriends",
-    operation_id="[wx]获取好友申请",
-    response_model=APIResponse,
-    summary='✨获取好友申请列表'
-)
-async def get_new_friends(
-    request: GetNewFriendsRequest,
-    service: WeChatService = Depends()
-):
-    """获取微信新朋友"""
-    return service.get_new_friends(
-        acceptable=request.acceptable,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/getnewfriends",
+#     operation_id="[wx]获取好友申请",
+#     response_model=APIResponse,
+#     summary='✨获取好友申请列表'
+# )
+# async def get_new_friends(
+#     request: GetNewFriendsRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """获取微信新朋友"""
+#     return service.get_new_friends(
+#         acceptable=request.acceptable,
+#         wxname=request.wxname
+#     )
 
-@router.post(
-    "/newfriend/accept",
-    operation_id="[wx]接受好友申请",
-    response_model=APIResponse,
-    summary='✨接受好友申请'
-)
-async def accept_new_friend(
-    request: AcceptNewFriendRequest,
-    service: WeChatService = Depends()
-):
-    """接受微信新朋友"""
-    if isinstance(request.tags, str):
-        tags = [request.tags]
-    else:
-        tags = request.tags
-    return service.accept_new_friend(
-        new_friend_id=request.new_friend_id,
-        remark=request.remark,
-        tags=tags,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/newfriend/accept",
+#     operation_id="[wx]接受好友申请",
+#     response_model=APIResponse,
+#     summary='✨接受好友申请'
+# )
+# async def accept_new_friend(
+#     request: AcceptNewFriendRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """接受微信新朋友"""
+#     if isinstance(request.tags, str):
+#         tags = [request.tags]
+#     else:
+#         tags = request.tags
+#     return service.accept_new_friend(
+#         new_friend_id=request.new_friend_id,
+#         remark=request.remark,
+#         tags=tags,
+#         wxname=request.wxname
+#     )
 
 @router.post(
     "/switch/chat",

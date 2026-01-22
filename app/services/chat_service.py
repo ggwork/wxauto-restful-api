@@ -11,13 +11,16 @@ def get_wechat(wxname: str) -> 'WeChat':
             # 获取第一个有效的实例
             for cached_wx in WxClient.values():
                 if check_wechat_alive(cached_wx):
+                    print('获取缓存的实例', flush=True)
                     return cached_wx
             # 如果没有有效实例，创建新的
+            print('没有有效实例，创建新的实例', flush=True)
             wx = WeChat()
             WxClient[wx.nickname] = wx
             return wx
         else:
             # 缓存为空，创建新实例
+            print('缓存为空，创建新实例', flush=True)
             wx = WeChat()
             WxClient[wx.nickname] = wx
             return wx
@@ -30,7 +33,7 @@ def get_wechat(wxname: str) -> 'WeChat':
             return wx
         else:
             # 实例已失效，重新创建
-            print(f"微信实例 {wxname} 已失效，重新创建")
+            print(f"微信实例 {wxname} 已失效，重新创建", flush=True)
             wx = WeChat(nickname=wxname)
             WxClient[wxname] = wx
             return wx
