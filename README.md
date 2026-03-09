@@ -135,6 +135,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 - `POST /api/v1/wechat/sendurlcard` - 发送 URL 卡片
 - `POST /api/v1/wechat/getallmessage` - 获取当前窗口消息
 - `POST /api/v1/wechat/gethistorymessage` - 获取历史消息
+- `POST /api/v1/wechat/getnextnewmessage` - 获取新消息
 
 #### 会话管理
 - `POST /api/v1/wechat/getsession` - 获取会话列表
@@ -142,24 +143,12 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 - `POST /api/v1/wechat/getallsubwindow` - 获取所有子窗口
 - `POST /api/v1/wechat/chatwith` - 切换聊天窗口
 
-#### 监听功能
-- `POST /api/v1/wechat/addlistenchat` - 添加监听
-- `POST /api/v1/wechat/removelistenchat` - 移除监听
-- `POST /api/v1/wechat/getnextnewmessage` - 获取新消息
-
 #### 好友管理
-- `POST /api/v1/wechat/getnewfriends` - 获取好友申请
-- `POST /api/v1/wechat/newfriend/accept` - 接受好友申请
-- `POST /api/v1/wechat/addnewfriend` - 添加新好友
 - `POST /api/v1/wechat/getfriends` - 获取好友列表
 - `POST /api/v1/wechat/getmyinfo` - 获取我的信息
 
 #### 群聊管理
 - `POST /api/v1/wechat/getrecentgroups` - 获取群聊列表
-
-#### 朋友圈功能
-- `POST /api/v1/wechat/moments` - 进入朋友圈
-- `POST /api/v1/wechat/publishmoment` - 发送朋友圈
 
 #### 页面控制
 - `POST /api/v1/wechat/switch/chat` - 切换到聊天页面

@@ -305,64 +305,64 @@ async def get_next_new_message(
         wxname=request.wxname
     )
 
-@router.post(
-    "/getnewfriends",
-    operation_id="[wx]获取好友申请",
-    response_model=APIResponse,
-    summary='✨获取好友申请列表'
-)
-async def get_new_friends(
-    request: GetNewFriendsRequest,
-    service: WeChatService = Depends()
-):
-    """获取微信新朋友"""
-    return await service.get_new_friends(
-        acceptable=request.acceptable,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/getnewfriends",
+#     operation_id="[wx]获取好友申请",
+#     response_model=APIResponse,
+#     summary='✨获取好友申请列表'
+# )
+# async def get_new_friends(
+#     request: GetNewFriendsRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """获取微信新朋友"""
+#     return await service.get_new_friends(
+#         acceptable=request.acceptable,
+#         wxname=request.wxname
+#     )
 
-@router.post(
-    "/newfriend/accept",
-    operation_id="[wx]接受好友申请",
-    response_model=APIResponse,
-    summary='✨接受好友申请'
-)
-async def accept_new_friend(
-    request: AcceptNewFriendRequest,
-    service: WeChatService = Depends()
-):
-    """接受微信新朋友"""
-    if isinstance(request.tags, str):
-        tags = [request.tags]
-    else:
-        tags = request.tags
-    return await service.accept_new_friend(
-        new_friend_id=request.new_friend_id,
-        remark=request.remark,
-        tags=tags,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/newfriend/accept",
+#     operation_id="[wx]接受好友申请",
+#     response_model=APIResponse,
+#     summary='✨接受好友申请'
+# )
+# async def accept_new_friend(
+#     request: AcceptNewFriendRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """接受微信新朋友"""
+#     if isinstance(request.tags, str):
+#         tags = [request.tags]
+#     else:
+#         tags = request.tags
+#     return await service.accept_new_friend(
+#         new_friend_id=request.new_friend_id,
+#         remark=request.remark,
+#         tags=tags,
+#         wxname=request.wxname
+#     )
 
-@router.post(
-    "/addnewfriend",
-    operation_id="[wx]添加好友",
-    response_model=APIResponse,
-    summary='✨添加新的好友'
-)
-async def add_new_friend(
-    request: AddNewFriendRequest,
-    service: WeChatService = Depends()
-):
-    """添加新的好友"""
-    return await service.add_new_friend(
-        keywords=request.keywords,
-        addmsg=request.addmsg,
-        remark=request.remark,
-        tags=request.tags,
-        permission=request.permission,
-        timeout=request.timeout,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/addnewfriend",
+#     operation_id="[wx]添加好友",
+#     response_model=APIResponse,
+#     summary='✨添加新的好友'
+# )
+# async def add_new_friend(
+#     request: AddNewFriendRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """添加新的好友"""
+#     return await service.add_new_friend(
+#         keywords=request.keywords,
+#         addmsg=request.addmsg,
+#         remark=request.remark,
+#         tags=request.tags,
+#         permission=request.permission,
+#         timeout=request.timeout,
+#         wxname=request.wxname
+#     )
 
 @router.post(
     "/getrecentgroups",
@@ -446,33 +446,33 @@ async def switch_to_contact_page(
     """切换到联系人页面"""
     return await service.switch_to_contact_page(wxname=request.wxname)
 
-@router.post(
-    "/moments",
-    operation_id="[wx]进入朋友圈",
-    response_model=APIResponse,
-    summary='✨进入朋友圈'
-)
-async def moments(
-    request: MomentsRequest,
-    service: WeChatService = Depends()
-):
-    """进入朋友圈"""
-    return await service.moments(timeout=request.timeout, wxname=request.wxname)
+# @router.post(
+#     "/moments",
+#     operation_id="[wx]进入朋友圈",
+#     response_model=APIResponse,
+#     summary='✨进入朋友圈'
+# )
+# async def moments(
+#     request: MomentsRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """进入朋友圈"""
+#     return await service.moments(timeout=request.timeout, wxname=request.wxname)
 
-@router.post(
-    "/publishmoment",
-    operation_id="[wx]发送朋友圈",
-    response_model=APIResponse,
-    summary='✨发送朋友圈'
-)
-async def publish_moment(
-    request: PublishMomentRequest,
-    service: WeChatService = Depends()
-):
-    """发送朋友圈"""
-    return await service.publish_moment(
-        text=request.text,
-        media_files=request.media_files,
-        privacy=request.privacy,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/publishmoment",
+#     operation_id="[wx]发送朋友圈",
+#     response_model=APIResponse,
+#     summary='✨发送朋友圈'
+# )
+# async def publish_moment(
+#     request: PublishMomentRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """发送朋友圈"""
+#     return await service.publish_moment(
+#         text=request.text,
+#         media_files=request.media_files,
+#         privacy=request.privacy,
+#         wxname=request.wxname
+#     )
