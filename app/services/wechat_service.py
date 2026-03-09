@@ -630,7 +630,7 @@ class WeChatService:
             wx = get_wechat(wxname)
             result = wx.SwitchToChat()
             # message = result.get('message') or '操作成功'
-            return APIResponse(success=bool(result), message='操作成功', data=result.get('data'))
+            return APIResponse(success=bool(result), message='操作成功', data=None)
 
         return await self._queue.submit(_switch_chat)
 
@@ -643,7 +643,7 @@ class WeChatService:
         wx = get_wechat(wxname)
         result = wx.SwitchToChat()
         # message = result.get('message') or '操作成功'
-        return APIResponse(success=bool(result), message='操作成功', data=result.get('data'))
+        return APIResponse(success=bool(result), message='操作成功', data=None)
 
     async def switch_to_contact_page(
             self,
@@ -654,8 +654,8 @@ class WeChatService:
         def _switch_contact():
             wx = get_wechat(wxname)
             result = wx.SwitchToContact()
-            message = result.get('message') or '操作成功'
-            return APIResponse(success=bool(result), message=message, data=result.get('data'))
+            # message = result.get('message') or '操作成功'
+            return APIResponse(success=bool(result), message='操作成功', data=None)
 
         return await self._queue.submit(_switch_contact)
 
@@ -667,8 +667,8 @@ class WeChatService:
         """切换到联系人页面（同步接口）"""
         wx = get_wechat(wxname)
         result = wx.SwitchToContact()
-        message = result.get('message') or '操作成功'
-        return APIResponse(success=bool(result), message=message, data=result.get('data'))
+        # message = result.get('message') or '操作成功'
+        return APIResponse(success=bool(result), message='操作成功', data=None)
 
     async def is_online(
             self,
