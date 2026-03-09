@@ -21,6 +21,7 @@ router = APIRouter()
 @router.post(
     "/start",
     operation_id="[listen]启动监听",
+    response_model=APIResponse,
     summary="启动指定联系人的消息监听"
 )
 async def start_listen(
@@ -37,6 +38,7 @@ async def start_listen(
 @router.post(
     "/stop",
     operation_id="[listen]停止监听",
+    response_model=APIResponse,
     summary="停止指定联系人的消息监听"
 )
 async def stop_listen(
@@ -50,6 +52,7 @@ async def stop_listen(
 @router.get(
     "/status",
     operation_id="[listen]获取监听状态",
+    response_model=APIResponse,
     summary="获取当前监听状态"
 )
 async def get_listen_status(
@@ -70,6 +73,7 @@ async def get_listen_status(
 @router.post(
     "/batch/start",
     operation_id="[listen]批量启动监听",
+    response_model=APIResponse,
     summary="批量启动多个联系人的消息监听"
 )
 async def batch_start_listen(

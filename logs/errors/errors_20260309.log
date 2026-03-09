@@ -125,3 +125,53 @@ AttributeError: 'FriendTextMessage' object has no attribute 'info'
 ================================================================================
 
 
+2026-03-09 14:55:38,328 - error_tracker - ERROR
+
+================================================================================
+🔴 错误详情
+================================================================================
+📅 时间:        2026-03-09 14:55:38.304
+🔧 方法:        _send_card
+❌ 错误类型:      LookupError
+💬 错误信息:      Find Control Timeout: {Name: '关闭', ControlType: ButtonControl}
+📋 额外信息:      {
+  "args": "()",
+  "kwargs": "{}",
+  "function_module": "app.services.wechat_service",
+  "function_name": "_send_card"
+}
+
+================================================================================
+📚 完整堆栈追踪:
+================================================================================
+Traceback (most recent call last):
+  File "G:\Files\Home\20260309skill\wxauto-restful-api\app\utils\error_handler.py", line 166, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "G:\Files\Home\20260309skill\wxauto-restful-api\app\services\wechat_service.py", line 436, in _send_card
+    result = wx.SendUrlCard(url=url, friends=friends, timeout=timeout)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Xingh\AppData\Roaming\Python\PYTHON~2\SITE-P~1\wxautox4\wx.py", line 378, in SendUrlCard
+  File "C:\Users\Xingh\AppData\Roaming\Python\PYTHON~2\SITE-P~1\wxautox4\ui\main.py", line 642, in send_card
+  File "C:\Users\Xingh\AppData\Roaming\Python\PYTHON~2\SITE-P~1\wxautox4\ui\component.py", line 883, in close
+  File "C:\Users\Xingh\AppData\Roaming\Python\Python311\site-packages\wxautox4\uia\uiautomation.py", line 6369, in Click
+    if not hasattr(self, 'winapi'):
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Xingh\AppData\Roaming\Python\Python311\site-packages\wxautox4\uia\uiautomation.py", line 5402, in winapi
+    self._winapi = Win32(self.GetTopLevelControl().NativeWindowHandle)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Xingh\AppData\Roaming\Python\Python311\site-packages\wxautox4\uia\uiautomation.py", line 6752, in GetTopLevelControl
+    handle = self.NativeWindowHandle
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Xingh\AppData\Roaming\Python\Python311\site-packages\wxautox4\uia\uiautomation.py", line 5839, in NativeWindowHandle
+    handle = self.Element.CurrentNativeWindowHandle
+             ^^^^^^^^^^^^
+  File "C:\Users\Xingh\AppData\Roaming\Python\Python311\site-packages\wxautox4\uia\uiautomation.py", line 5996, in Element
+    self.Refind(maxSearchSeconds=TIME_OUT_SECOND, searchIntervalSeconds=self.searchInterval)
+  File "C:\Users\Xingh\AppData\Roaming\Python\Python311\site-packages\wxautox4\uia\uiautomation.py", line 6306, in Refind
+    raise LookupError('Find Control Timeout: ' + self.GetSearchPropertiesStr())
+LookupError: Find Control Timeout: {Name: '关闭', ControlType: ButtonControl}
+
+================================================================================
+
+

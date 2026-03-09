@@ -149,7 +149,7 @@ def get_wechat_subwin(wxname: str, who: str) -> Optional[Chat]:
 
 
 def get_raw_messages(msgs, chat_info):
-    result = {}
+    # result = {}
 
     if msgs:
         raw_msgs = []
@@ -160,9 +160,9 @@ def get_raw_messages(msgs, chat_info):
                 if item in chat_info:
                     raw.pop(item)
             raw_msgs.append(raw)
-    result['chat_info'] = chat_info
-    result['msg'] = raw_msgs
-    return result
+    # result['chat_info'] = chat_info
+    # result['msg'] = raw_msgs
+    return raw_msgs
 
 
 class WeChatService:
@@ -318,12 +318,17 @@ class WeChatService:
         """切换聊天窗口"""
         @handle_service_error(custom_message="切换聊天窗口失败")
         def _chat_with():
+            from app.utils.response_builder import single_object, error
+
             wx = get_wechat(wxname)
             result = wx.ChatWith(who=who, exact=exact)
             if result:
-                return APIResponse(success=True, message='主窗口聊天切换成功', data={'chatname': result})
+                return single_object(
+                    obj={"name": result, "type": "unknown"},
+                    message='主窗口聊天切换成功'
+                )
             else:
-                return APIResponse(success=False, message='主窗口聊天切换失败')
+                return error(message='主窗口聊天切换失败', error_code='SWITCH_FAILED')
 
         return await self._queue.submit(_chat_with)
 
@@ -335,12 +340,17 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """切换聊天窗口（同步接口）"""
+        from app.utils.response_builder import single_object, error
+
         wx = get_wechat(wxname)
         result = wx.ChatWith(who=who, exact=exact)
         if result:
-            return APIResponse(success=True, message='主窗口聊天切换成功', data={'chatname': result})
+            return single_object(
+                obj={"name": result, "type": "unknown"},
+                message='主窗口聊天切换成功'
+            )
         else:
-            return APIResponse(success=False, message='主窗口聊天切换失败')
+            return error(message='主窗口聊天切换失败', error_code='SWITCH_FAILED')
 
     async def get_all_sub_window(
             self,
@@ -349,10 +359,12 @@ class WeChatService:
         """获取所有子窗口"""
         @handle_service_error(custom_message="获取子窗口失败")
         def _get_all():
+            from app.utils.response_builder import list_response
+
             wx = get_wechat(wxname)
             result = wx.GetAllSubWindow()
-            data = [{'name': i.who, 'type': i.chat_type} for i in result]
-            return APIResponse(success=True, message='', data=data)
+            items = [{'id': i.who, 'name': i.who, 'type': i.chat_type} for i in result]
+            return list_response(items=items, message="")
 
         return await self._queue.submit(_get_all)
 
@@ -362,10 +374,12 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取所有子窗口（同步接口）"""
+        from app.utils.response_builder import list_response
+
         wx = get_wechat(wxname)
         result = wx.GetAllSubWindow()
-        data = [{'name': i.who, 'type': i.chat_type} for i in result]
-        return APIResponse(success=True, message='', data=data)
+        items = [{'id': i.who, 'name': i.who, 'type': i.chat_type} for i in result]
+        return list_response(items=items, message="")
 
     async def get_all_message(
             self,
@@ -375,14 +389,17 @@ class WeChatService:
         """获取所有消息"""
         @handle_service_error(custom_message="获取消息失败")
         def _get_all():
+            from app.utils.response_builder import message_data, error
+
             wx = get_wechat(wxname)
             if who:
                 if not wx.ChatWith(who):
-                    return APIResponse(success=False, message='找不到聊天窗口')
+                    return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
             msgs = wx.GetAllMessage()
             chat_info = wx.ChatInfo()
-            result = get_raw_messages(msgs, chat_info)
-            return APIResponse(success=True, message='', data=result)
+            # raw_msgs = get_raw_messages(msgs, chat_info)
+            raw_msgs = get_raw_messages(msgs, chat_info)
+            return message_data(messages=raw_msgs, chat_info=chat_info, message="")
 
         return await self._queue.submit(_get_all)
 
@@ -393,14 +410,16 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取所有消息（同步接口）"""
+        from app.utils.response_builder import message_data, error
+
         wx = get_wechat(wxname)
         if who:
             if not wx.ChatWith(who):
-                return APIResponse(success=False, message='找不到聊天窗口')
-        result = wx.ChatInfo()
+                return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
+        chat_info = wx.ChatInfo()
         msgs = wx.GetAllMessage()
-        result['msg'] = [msg.info for msg in msgs]
-        return APIResponse(success=True, message='', data=result)
+        raw_msgs = [msg.info for msg in msgs]
+        return message_data(messages=raw_msgs, chat_info=chat_info, message="")
 
     # wxautox4特有功能
     async def send_url_card(
@@ -477,13 +496,14 @@ class WeChatService:
         """获取下一个新消息"""
         @handle_service_error(custom_message="获取新消息失败")
         def _get_next():
+            from app.utils.response_builder import message_data
+
             wx = get_wechat(wxname)
-            result = {}
             next_msgs = wx.GetNextNewMessage(filter_mute=filter_mute)
             chat_info = wx.ChatInfo()
-            msgs = next_msgs['msg']
-            result = get_raw_messages(msgs, chat_info)
-            return APIResponse(success=True, message='', data=result)
+            msgs = next_msgs.get('msg', [])
+            raw_msgs = get_raw_messages(msgs, chat_info)
+            return message_data(messages=raw_msgs, chat_info=chat_info, message="")
 
         return await self._queue.submit(_get_next)
 
@@ -494,13 +514,14 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取下一个新消息（同步接口）"""
+        from app.utils.response_builder import message_data
+
         wx = get_wechat(wxname)
-        result = {}
         next_msgs = wx.GetNextNewMessage(filter_mute=filter_mute)
         chat_info = wx.ChatInfo()
-        msgs = next_msgs['msg']
-        result = get_raw_messages(msgs, chat_info)
-        return APIResponse(success=True, message='', data=result)
+        msgs = next_msgs.get('msg', [])
+        raw_msgs = get_raw_messages(msgs, chat_info)
+        return message_data(messages=raw_msgs, chat_info=chat_info, message="")
 
     async def send_quote_by_id(
             self,
@@ -656,12 +677,18 @@ class WeChatService:
         """检查微信是否在线"""
         @handle_service_error(custom_message="检查在线状态失败")
         def _check_online():
+            from app.utils.response_builder import single_object
+
             wx = get_wechat(wxname)
             result = wx.IsOnline()
-            if result:
-                return APIResponse(success=True, message='在线', data={'status': 'online', 'online': True})
-            else:
-                return APIResponse(success=True, message='离线', data={'status': 'offline', 'online': False})
+            status_data = {
+                "status": "online" if result else "offline",
+                "online": result
+            }
+            return single_object(
+                obj=status_data,
+                message='在线' if result else '离线'
+            )
 
         return await self._queue.submit(_check_online)
 
@@ -671,12 +698,18 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """检查微信是否在线（同步接口）"""
+        from app.utils.response_builder import single_object
+
         wx = get_wechat(wxname)
         result = wx.IsOnline()
-        if result:
-            return APIResponse(success=True, message='在线', data={'status': 'online', 'online': True})
-        else:
-            return APIResponse(success=True, message='离线', data={'status': 'offline', 'online': False})
+        status_data = {
+            "status": "online" if result else "offline",
+            "online": result
+        }
+        return single_object(
+            obj=status_data,
+            message='在线' if result else '离线'
+        )
 
     # 新增：获取会话列表
     async def get_session(
@@ -686,19 +719,15 @@ class WeChatService:
         """获取当前会话列表"""
         @handle_service_error(custom_message="获取会话列表失败")
         def _get_session():
+            from app.utils.response_builder import list_response, wechat_not_ready
+
             wx = get_wechat(wxname)
             if wx is None:
-                return APIResponse(
-                    success=False,
-                    message="wxautox4未激活，无法使用微信功能",
-                    data={
-                        "error": "NOT_ACTIVATED",
-                        "solution": "请先运行: wxautox4 -a your-activation-code"
-                    }
-                )
+                return wechat_not_ready()
+
             result = wx.GetSession()
-            data = [{'info': session.info} for session in result]
-            return APIResponse(success=True, message='', data=data)
+            items = [session.info for session in result]
+            return list_response(items=items, message="")
 
         return await self._queue.submit(_get_session)
 
@@ -708,19 +737,15 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取当前会话列表（同步接口）"""
+        from app.utils.response_builder import list_response, wechat_not_ready
+
         wx = get_wechat(wxname)
         if wx is None:
-            return APIResponse(
-                success=False,
-                message="wxautox4未激活，无法使用微信功能",
-                data={
-                    "error": "NOT_ACTIVATED",
-                    "solution": "请先运行: wxautox4 -a your-activation-code"
-                }
-            )
+            return wechat_not_ready()
+
         result = wx.GetSession()
-        data = [{'info': session.info} for session in result]
-        return APIResponse(success=True, message='', data=data)
+        items = [session.info for session in result]
+        return list_response(items=items, message="")
 
     # 新增：获取子窗口
     async def get_sub_window(
@@ -731,12 +756,17 @@ class WeChatService:
         """获取指定子窗口"""
         @handle_service_error(custom_message="获取子窗口失败")
         def _get_sub_window():
+            from app.utils.response_builder import single_object, error
+
             wx = get_wechat(wxname)
             result = wx.GetSubWindow(nickname=nickname)
             if result:
-                return APIResponse(success=True, message='', data={'who': result.who, 'type': result.chat_type})
+                return single_object(
+                    obj={"name": result.who, "type": result.chat_type},
+                    message=""
+                )
             else:
-                return APIResponse(success=False, message='找不到该聊天窗口')
+                return error(message='找不到该聊天窗口', error_code='SUBWINDOW_NOT_FOUND')
 
         return await self._queue.submit(_get_sub_window)
 
@@ -747,12 +777,17 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取指定子窗口（同步接口）"""
+        from app.utils.response_builder import single_object, error
+
         wx = get_wechat(wxname)
         result = wx.GetSubWindow(nickname=nickname)
         if result:
-            return APIResponse(success=True, message='', data={'who': result.who, 'type': result.chat_type})
+            return single_object(
+                obj={"name": result.who, "type": result.chat_type},
+                message=""
+            )
         else:
-            return APIResponse(success=False, message='找不到该聊天窗口')
+            return error(message='找不到该聊天窗口', error_code='SUBWINDOW_NOT_FOUND')
 
     # 新增：移除监听
     async def remove_listen_chat(
@@ -792,15 +827,17 @@ class WeChatService:
         """获取历史消息"""
         @handle_service_error(custom_message="获取历史消息失败")
         def _get_history():
+            from app.utils.response_builder import message_data, error
+
             wx = get_wechat(wxname)
             # 先切换到指定聊天窗口
             if not wx.ChatWith(who=who):
-                return APIResponse(success=False, message='找不到聊天窗口')
+                return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
             # 获取历史消息
             msgs = wx.GetHistoryMessage(n=n)
             chat_info = wx.ChatInfo()
-            data = get_raw_messages(msgs, chat_info)
-            return APIResponse(success=True, message='', data={'msgs': data})
+            raw_msgs = get_raw_messages(msgs, chat_info)
+            return message_data(messages=raw_msgs, chat_info=chat_info, message="")
 
         return await self._queue.submit(_get_history)
 
@@ -812,15 +849,17 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取历史消息（同步接口）"""
+        from app.utils.response_builder import message_data, error
+
         wx = get_wechat(wxname)
         # 先切换到指定聊天窗口
         if not wx.ChatWith(who=who):
-            return APIResponse(success=False, message='找不到聊天窗口')
+            return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
         # 获取历史消息
         msgs = wx.GetHistoryMessage(n=n)
         chat_info = wx.ChatInfo()
-        data = get_raw_messages(msgs, chat_info)
-        return APIResponse(success=True, message='', data={'msgs': data})
+        raw_msgs = get_raw_messages(msgs, chat_info)
+        return message_data(messages=raw_msgs, chat_info=chat_info, message="")
 
     # 新增：获取群聊列表
     async def get_all_recent_groups(
@@ -830,16 +869,19 @@ class WeChatService:
         """获取最近群聊列表"""
         @handle_service_error(custom_message="获取群聊列表失败")
         def _get_groups():
+            from app.utils.response_builder import list_response, error
+
             wx = get_wechat(wxname)
             result = wx.GetAllRecentGroups()
             # 判断返回类型
             if hasattr(result, '__iter__') and not isinstance(result, dict):
                 # 成功返回列表
-                return APIResponse(success=True, message='', data={'groups': list(result)})
+                items = list(result)
+                return list_response(items=items, message="")
             else:
                 # 失败返回WxResponse
                 message = result.get('message') if hasattr(result, 'get') else '获取失败'
-                return APIResponse(success=False, message=message)
+                return error(message=message)
 
         return await self._queue.submit(_get_groups)
 
@@ -849,16 +891,19 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取最近群聊列表（同步接口）"""
+        from app.utils.response_builder import list_response, error
+
         wx = get_wechat(wxname)
         result = wx.GetAllRecentGroups()
         # 判断返回类型
         if hasattr(result, '__iter__') and not isinstance(result, dict):
             # 成功返回列表
-            return APIResponse(success=True, message='', data={'groups': list(result)})
+            items = list(result)
+            return list_response(items=items, message="")
         else:
             # 失败返回WxResponse
             message = result.get('message') if hasattr(result, 'get') else '获取失败'
-            return APIResponse(success=False, message=message)
+            return error(message=message)
 
     # 新增：获取好友列表
     async def get_friend_details(
@@ -870,9 +915,11 @@ class WeChatService:
         """获取好友详情列表"""
         @handle_service_error(custom_message="获取好友列表失败")
         def _get_friends():
+            from app.utils.response_builder import list_response
+
             wx = get_wechat(wxname)
             result = wx.GetFriendDetails(n=n, save_head_image=save_head_image)
-            return APIResponse(success=True, message='', data={'friends': result})
+            return list_response(items=result, message="")
 
         return await self._queue.submit(_get_friends)
 
@@ -884,9 +931,11 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取好友详情列表（同步接口）"""
+        from app.utils.response_builder import list_response
+
         wx = get_wechat(wxname)
         result = wx.GetFriendDetails(n=n, save_head_image=save_head_image)
-        return APIResponse(success=True, message='', data={'friends': result})
+        return list_response(items=result, message="")
 
     # 新增：获取我的信息
     async def get_my_info(
@@ -896,9 +945,11 @@ class WeChatService:
         """获取我的账号信息"""
         @handle_service_error(custom_message="获取账号信息失败")
         def _get_info():
+            from app.utils.response_builder import single_object
+
             wx = get_wechat(wxname)
             result = wx.GetMyInfo()
-            return APIResponse(success=True, message='', data=result)
+            return single_object(obj=result, message="")
 
         return await self._queue.submit(_get_info)
 
@@ -908,9 +959,11 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """获取我的账号信息（同步接口）"""
+        from app.utils.response_builder import single_object
+
         wx = get_wechat(wxname)
         result = wx.GetMyInfo()
-        return APIResponse(success=True, message='', data=result)
+        return single_object(obj=result, message="")
 
     # 新增：添加好友
     async def add_new_friend(
@@ -973,12 +1026,17 @@ class WeChatService:
         """进入朋友圈"""
         @handle_service_error(custom_message="进入朋友圈失败")
         def _moments():
+            from app.utils.response_builder import single_object, error
+
             wx = get_wechat(wxname)
             result = wx.Moments(timeout=timeout)
             if result:
-                return APIResponse(success=True, message='已进入朋友圈', data={'status': 'entered'})
+                return single_object(
+                    obj={"status": "entered"},
+                    message='已进入朋友圈'
+                )
             else:
-                return APIResponse(success=False, message='进入朋友圈失败')
+                return error(message='进入朋友圈失败', error_code='MOMENTS_FAILED')
 
         return await self._queue.submit(_moments)
 
@@ -989,12 +1047,17 @@ class WeChatService:
             wxname: Optional[str] = None
     ) -> APIResponse:
         """进入朋友圈（同步接口）"""
+        from app.utils.response_builder import single_object, error
+
         wx = get_wechat(wxname)
         result = wx.Moments(timeout=timeout)
         if result:
-            return APIResponse(success=True, message='已进入朋友圈', data={'status': 'entered'})
+            return single_object(
+                obj={"status": "entered"},
+                message='已进入朋友圈'
+            )
         else:
-            return APIResponse(success=False, message='进入朋友圈失败')
+            return error(message='进入朋友圈失败', error_code='MOMENTS_FAILED')
 
     # 新增：发送朋友圈
     async def publish_moment(

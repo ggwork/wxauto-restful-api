@@ -1,23 +1,292 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+# ============================================================
+# Python 相关
+# ============================================================
 
-# uv
+# 字节码文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 分发 / 打包
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# 单元测试 / 覆盖率报告
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+junit*.xml
+
+# 翻译
+*.mo
+*.pot
+
+# Django 相关：
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask 相关：
+instance/
+.webassets-cache
+
+# Scrapy 相关：
+.scrapy
+
+# Sphinx 文档
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery 相关
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath 解析文件
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder 项目设置
+.spyderproject
+.spyproject
+
+# Rope 项目设置
+.ropeproject
+
+# mkdocs 文档
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre 类型检查
+.pyre/
+
+# ============================================================
+# uv 包管理器
+# ============================================================
 .python-version
 uv.lock
 
-# Virtual environments
-.venv
+# ============================================================
+# IDE 相关
+# ============================================================
 
-# project files
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*.swn
+*~
+.[^.]sw*
+
+# Emacs
+*~
+\#*\#
+.\#*
+.dir-locals.el
+
+# ============================================================
+# 项目特定文件
+# ============================================================
+
+# 数据目录
 data/
+data/*/
+!data/.gitkeep
+
+# 上传文件
 uploads/
+uploads/*/
+!uploads/.gitkeep
+
+# 日志文件
+logs/
+logs/*/
+*.log
+!logs/.gitkeep
+
+# wxautox4 日志
 wxauto_logs/
-wxautox/
-wxautox1/
+wxauto_logs/*/
 wxauto_api.log
-.*
+!wxauto_logs/.gitkeep
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-shm
+*.db-wal
+
+# 临时文件
+*.tmp
+*.bak
+*.swp
+*.old
+temp/
+tmp/
+ Temporary/
+
+# ============================================================
+# 操作系统相关
+# ============================================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.url
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================================
+# 其他
+# ============================================================
+
+# 备份文件
+*.backup
+*.bak
+
+# 压缩文件
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# 证书和密钥
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# 环境变量文件
+.env
+.env.*
+!.env.example
+
+# 配置文件（如果有敏感信息）
+config.local.yaml
+config.*.local.yaml
+
+# 测试文件
+test_*.py
+*_test.py
+tests/
+*.test
+
+# 报告和文档（临时）
+*.report
+*报告.md
+*总结.md
+!docs/**/*.md
+
+# 临时报告文件（上一级目录）
+../接口返回值格式*.md
+../返回值格式*.md
+../项目清理*.md

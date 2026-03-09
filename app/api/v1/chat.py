@@ -8,6 +8,7 @@ router = APIRouter()
 @router.post(
     "/send",
     operation_id="[chat]发送消息",
+    response_model=APIResponse,
     summary="子窗口发送消息"
 )
 async def send_message(
@@ -25,6 +26,7 @@ async def send_message(
 @router.post(
     "/getallmessage",
     operation_id="[chat]获取所有消息",
+    response_model=APIResponse,
     summary="获取微信子窗口所有消息"
 )
 async def get_all_message(
@@ -37,6 +39,7 @@ async def get_all_message(
 @router.post(
     "/getnewmessage",
     operation_id="[chat]获取新消息",
+    response_model=APIResponse,
     summary="获取微信子窗口新消息"
 )
 async def get_new_message(
@@ -49,6 +52,7 @@ async def get_new_message(
 @router.post(
     "/msg/quote",
     operation_id="[chat]发送引用消息",
+    response_model=APIResponse,
     summary="子窗口根据id发送引用消息"
 )
 async def send_quote_by_id(
@@ -64,8 +68,9 @@ async def send_quote_by_id(
     )
 
 @router.post(
-    "/close", 
+    "/close",
     operation_id="[chat]关闭子窗口",
+    response_model=APIResponse,
     summary="关闭子窗口"
 )
 async def close_sub_window(

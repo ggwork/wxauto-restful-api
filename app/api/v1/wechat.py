@@ -257,37 +257,37 @@ async def send_url_card(
         wxname=request.wxname
     )
 
-@router.post(
-    "/addlistenchat",
-    operation_id="[wx]添加监听",
-    response_model=APIResponse,
-    summary="添加监听（需和配合/getnextnewmessage来获取新消息）"
-)
-async def add_listen_chat(
-    request: AddListenChatRequest,
-    service: WeChatService = Depends()
-):
-    """添加微信子窗口监听"""
-    return await service.add_listen_chat(
-        who=request.who,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/addlistenchat",
+#     operation_id="[wx]添加监听",
+#     response_model=APIResponse,
+#     summary="添加监听（需和配合/getnextnewmessage来获取新消息）"
+# )
+# async def add_listen_chat(
+#     request: AddListenChatRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """添加微信子窗口监听"""
+#     return await service.add_listen_chat(
+#         who=request.who,
+#         wxname=request.wxname
+#     )
 
-@router.post(
-    "/removelistenchat",
-    operation_id="[wx]移除监听",
-    response_model=APIResponse,
-    summary="移除监听聊天"
-)
-async def remove_listen_chat(
-    request: RemoveListenChatRequest,
-    service: WeChatService = Depends()
-):
-    """移除微信子窗口监听"""
-    return await service.remove_listen_chat(
-        who=request.who,
-        wxname=request.wxname
-    )
+# @router.post(
+#     "/removelistenchat",
+#     operation_id="[wx]移除监听",
+#     response_model=APIResponse,
+#     summary="移除监听聊天"
+# )
+# async def remove_listen_chat(
+#     request: RemoveListenChatRequest,
+#     service: WeChatService = Depends()
+# ):
+#     """移除微信子窗口监听"""
+#     return await service.remove_listen_chat(
+#         who=request.who,
+#         wxname=request.wxname
+#     )
 
 @router.post(
     "/getnextnewmessage",
