@@ -162,13 +162,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 - `POST /api/v1/chat/msg/quote` - 发送引用消息
 - `POST /api/v1/chat/close` - 关闭子窗口
 
-### 监听接口
-- `POST /api/v1/listen/start` - 启动监听
-- `POST /api/v1/listen/stop` - 停止监听
-- `GET /api/v1/listen/status` - 获取监听状态
-- `POST /api/v1/listen/batch/start` - 批量启动监听
-- `GET /api/v1/listen/config` - 获取配置
-
 ### 文件管理接口
 - `POST /api/v1/files/upload` - 上传文件
 - `GET /api/v1/files/{file_id}` - 获取文件信息
