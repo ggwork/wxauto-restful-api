@@ -3,9 +3,13 @@
 
 功能：
 1. 端口占用检测和自动分配
-2. 服务状态记录
+2. 服务状态记录（保存在用户主目录 ~/.wxautox/）
 3. 服务存活检测
-4. 避免重复启动
+4. 避免重复启动（即使从不同目录启动也能检测）
+
+注意：
+- 状态文件保存在 ~/.wxautox/service_status.json
+- 这样即使从不同目录或项目副本启动，也能检测到已运行的服务
 """
 
 import socket
@@ -22,16 +26,18 @@ import threading
 class ServiceManager:
     """服务管理器"""
 
-    def __init__(self, service_name: str = "wxauto-restful-api", config_path: str = "data"):
+    def __init__(self, service_name: str = "wxauto-restful-api"):
         """
         初始化服务管理器
 
         Args:
             service_name: 服务名称
-            config_path: 配置文件目录
         """
         self.service_name = service_name
-        self.config_path = Path(config_path)
+
+        # 使用用户主目录，避免多副本启动问题
+        home_dir = Path.home()
+        self.config_path = home_dir / ".wxautox"
         self.status_file = self.config_path / "service_status.json"
         self.lock_file = self.config_path / "service.lock"
 

@@ -65,9 +65,22 @@
 ```
 app/services/service_manager.py  # 服务管理器实现
 run.py                           # 集成服务管理的启动脚本
-data/service_status.json         # 服务状态记录（自动生成）
-data/service.lock               # 启动锁文件（自动生成）
+~/.wxautox/service_status.json  # 服务状态记录（自动生成）
+~/.wxautox/service.lock         # 启动锁文件（自动生成）
 ```
+
+### 状态文件位置
+
+**重要**: 状态文件保存在用户主目录 `~/.wxautox/`，而不是项目目录。
+
+**原因**:
+- ✅ 避免项目相对路径的问题
+- ✅ 即使从不同目录或项目副本启动，也能检测到已运行的服务
+- ✅ 真正实现全局的服务状态管理
+
+**路径示例**:
+- Windows: `C:\Users\<用户名>\.wxautox\service_status.json`
+- Linux/Mac: `/home/<用户名>/.wxautox/service_status.json`
 
 ### 状态文件格式
 
@@ -262,8 +275,12 @@ RuntimeError: 无法在 8000-8100 范围内找到可用端口
 
 **解决方案**:
 ```bash
-# 手动删除状态文件
-rm data/service_status.json
+# 手动删除状态文件（在用户主目录）
+# Windows
+del %USERPROFILE%\.wxautox\service_status.json
+
+# Linux/Mac
+rm ~/.wxautox/service_status.json
 
 # 重新启动服务
 python run.py
@@ -278,10 +295,14 @@ python run.py
 
 **解决方案**:
 ```bash
-# 如果确认没有其他进程在启动，删除锁文件
-rm data/service.lock
+# 如果确认没有其他进程在启动，删除锁文件（在用户主目录）
+# Windows
+del %USERPROFILE%\.wxautox\service.lock
 
-# 等待5分钟让锁自动超时
+# Linux/Mac
+rm ~/.wxautox/service.lock
+
+# 或等待5分钟让锁自动超时
 ```
 
 ## 📊 优势总结
