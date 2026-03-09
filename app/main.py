@@ -2,17 +2,18 @@ from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from app.api.v1 import wechat, chat, apps, files, info
+from app.api.v1 import wechat, chat, apps, files, info, listen, activation
 from app.utils.auth import get_current_token
 from app.models.response import APIResponse
 from app.utils.config import settings
 from app.utils.wx_package_manager import get_supported_features
+from app.middleware.concurrency import ConcurrencyControlMiddleware
 from typing import Any, Dict
 from fastapi.responses import HTMLResponse
 
 app = FastAPI(
-    title="WXAuto API",
-    description="微信自动化API服务，统一使用 wxautox4",
+    title="wxautox4 API",
+    description="wxautox4微信自动化API服务",
     version="2.0.0",
     docs_url=None,  # 禁用默认文档，使用自定义
     redoc_url=None,  # 禁用默认ReDoc，使用自定义
@@ -38,6 +39,15 @@ app.openapi = custom_openapi
 # 挂载静态文件
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# 挂载Web控制台（生产环境）
+try:
+    from fastapi.staticfiles import StaticFiles
+    web_dist = Path("web/dist")
+    if web_dist.exists():
+        app.mount("/", StaticFiles(directory="web/dist", html=True), name="web")
+except Exception:
+    pass  # 开发环境可能未构建前端
+
 # 配置CORS
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +56,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 添加并发控制中间件（确保微信UI操作串行执行）
+app.add_middleware(ConcurrencyControlMiddleware)
+
+
+# 启动事件：自动初始化微信实例
+@app.on_event("startup")
+async def startup_event():
+    """服务启动时自动初始化微信实例"""
+    from app.services.init import initialize_wechat_on_startup
+
+    # 尝试初始化微信实例
+    # 即使失败也不影响服务启动
+    initialize_wechat_on_startup()
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
@@ -91,6 +115,9 @@ app.include_router(wechat.router, prefix=f"{settings.api.prefix}/wechat", tags=[
 # app.include_router(apps.router, prefix=f"{settings.api.prefix}/apps", tags=["Apps"], dependencies=[Depends(get_current_token)])
 app.include_router(files.router, prefix="/api/v1/files", tags=["files"])
 app.include_router(info.router, prefix=f"{settings.api.prefix}/info", tags=["Info"])
+app.include_router(listen.router, prefix=f"{settings.api.prefix}/listen", tags=["Listen"])
+# 激活相关接口无需认证
+app.include_router(activation.router, prefix=f"{settings.api.prefix}/activation", tags=["Activation"])
 
 # 自定义Swagger UI路由
 @app.get(settings.api.docs_url, include_in_schema=False)

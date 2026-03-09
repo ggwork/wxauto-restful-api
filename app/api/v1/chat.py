@@ -6,16 +6,16 @@ from app.models.response import APIResponse
 router = APIRouter()
 
 @router.post(
-    "/send", 
+    "/send",
     operation_id="[chat]发送消息",
     summary="子窗口发送消息"
 )
 async def send_message(
-    request: SendMessageRequest, 
+    request: SendMessageRequest,
     service: ChatService = Depends()
 ):
     """微信子窗口发送消息"""
-    return service.send_message(
+    return await service.send_message(
         msg=request.msg,
         who=request.who,
         clear=request.clear,
@@ -23,7 +23,7 @@ async def send_message(
     )
 
 @router.post(
-    "/getallmessage", 
+    "/getallmessage",
     operation_id="[chat]获取所有消息",
     summary="获取微信子窗口所有消息"
 )
@@ -32,12 +32,10 @@ async def get_all_message(
     service: ChatService = Depends()
 ):
     """获取微信子窗口所有消息"""
-    ser_get_all = service.get_all_message
-    print(ser_get_all)
-    return ser_get_all(who=request.who)
+    return await service.get_all_message(who=request.who)
 
 @router.post(
-    "/getnewmessage", 
+    "/getnewmessage",
     operation_id="[chat]获取新消息",
     summary="获取微信子窗口新消息"
 )
@@ -46,10 +44,10 @@ async def get_new_message(
     service: ChatService = Depends()
 ):
     """获取微信子窗口新消息"""
-    return service.get_new_message(who=request.who)
+    return await service.get_new_message(who=request.who)
 
 @router.post(
-    "/msg/quote", 
+    "/msg/quote",
     operation_id="[chat]发送引用消息",
     summary="子窗口根据id发送引用消息"
 )
@@ -58,7 +56,7 @@ async def send_quote_by_id(
     service: ChatService = Depends()
 ):
     """根据id发送引用消息"""
-    return service.send_quote_by_id(
+    return await service.send_quote_by_id(
         msg_id=request.msg_id,
         content=request.content,
         who=request.who,

@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-03-09T13:59:41.393249",
+  "function": "_get_history",
+  "error_type": "AttributeError",
+  "error_message": "'FriendTextMessage' object has no attribute 'info'",
+  "traceback": "Traceback (most recent call last):\n  File \"G:\\Files\\Home\\20260309skill\\wxauto-restful-api\\app\\utils\\error_handler.py\", line 166, in sync_wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\Files\\Home\\20260309skill\\wxauto-restful-api\\app\\services\\wechat_service.py\", line 801, in _get_history\n    data = [msg.info for msg in msgs]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\Files\\Home\\20260309skill\\wxauto-restful-api\\app\\services\\wechat_service.py\", line 801, in <listcomp>\n    data = [msg.info for msg in msgs]\n            ^^^^^^^^\nAttributeError: 'FriendTextMessage' object has no attribute 'info'\n",
+  "extra_info": {
+    "args": "()",
+    "kwargs": "{}",
+    "function_module": "app.services.wechat_service",
+    "function_name": "_get_history"
+  }
+}

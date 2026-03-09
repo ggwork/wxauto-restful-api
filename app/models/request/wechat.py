@@ -71,3 +71,47 @@ class SwitchToContactPageRequest(BaseRequest):
 
 class IsOnlineRequest(BaseRequest):
     pass
+
+# 获取会话列表请求
+class GetSessionRequest(BaseRequest):
+    pass
+
+# 获取子窗口请求
+class GetSubWindowRequest(BaseRequest):
+    nickname: str
+
+# 移除监听请求
+class RemoveListenChatRequest(BaseRequest):
+    who: str
+
+# 获取历史消息请求
+class GetHistoryMessageRequest(BaseChatRelevantRequest):
+    n: int = 50
+
+# 获取群聊列表请求
+class GetAllRecentGroupsRequest(BaseRequest):
+    pass
+
+# 获取好友列表请求
+class GetFriendDetailsRequest(BaseRequest):
+    n: Optional[int] = None
+    save_head_image: bool = False
+
+# 添加好友请求
+class AddNewFriendRequest(BaseRequest):
+    keywords: str
+    addmsg: Optional[str] = None
+    remark: Optional[str] = None
+    tags: Optional[List[str]] = None
+    permission: str = '朋友圈'
+    timeout: int = 5
+
+# 发送朋友圈请求
+class PublishMomentRequest(BaseRequest):
+    text: str
+    media_files: Optional[List[str]] = None
+    privacy: Optional[dict] = None
+
+# 进入朋友圈请求
+class MomentsRequest(BaseRequest):
+    timeout: int = 3

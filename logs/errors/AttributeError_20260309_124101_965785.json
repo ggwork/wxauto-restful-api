@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-03-09T12:41:01.964961",
+  "function": "_switch_chat",
+  "error_type": "AttributeError",
+  "error_message": "'NoneType' object has no attribute 'get'",
+  "traceback": "Traceback (most recent call last):\n  File \"G:\\Files\\Home\\20260309skill\\wxauto-restful-api\\app\\utils\\error_handler.py\", line 155, in sync_wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\Files\\Home\\20260309skill\\wxauto-restful-api\\app\\services\\wechat_service.py\", line 543, in _switch_chat\n    message = result.get('message') or '操作成功'\n              ^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'get'\n",
+  "extra_info": {
+    "args": "()",
+    "kwargs": "{}",
+    "function_module": "app.services.wechat_service",
+    "function_name": "_switch_chat"
+  }
+}

@@ -4,13 +4,13 @@ from app.utils.config import settings
 
 class DatabaseFactory:
     """数据库工厂类"""
-    
+
     _instance: Optional[SQLiteDatabase] = None
-    
+
     @classmethod
     def get_database(cls):
         """获取数据库实例
-        
+
         Returns:
             BaseDatabase: 数据库实例
         """
@@ -23,4 +23,14 @@ class DatabaseFactory:
             #     cls._instance = MongoDBDatabase()
             else:
                 raise ValueError(f"Unsupported database type: {settings.database.type}")
-        return cls._instance 
+        return cls._instance
+
+
+# 模块级便捷函数
+def get_database():
+    """获取数据库实例（便捷函数）
+
+    Returns:
+        BaseDatabase: 数据库实例
+    """
+    return DatabaseFactory.get_database() 

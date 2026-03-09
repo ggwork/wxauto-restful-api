@@ -1,5 +1,6 @@
 """
-wxautox4 包管理器
+wxautox4 包管理器（简化版）
+
 统一使用 wxautox4
 """
 
@@ -10,7 +11,7 @@ from app.utils.logger import setup_logger
 logger = setup_logger()
 
 class WxPackageManager:
-    """wxautox4 包管理器"""
+    """wxautox4 包管理器（简化版）"""
 
     def __init__(self):
         """初始化包管理器"""
@@ -21,14 +22,10 @@ class WxPackageManager:
         """加载 wxautox4 包"""
         try:
             self._package = importlib.import_module("wxautox4")
-            # 检查 license
-            if self._package.utils.useful.check_license():
-                logger.info("已加载 wxautox4 包")
-            else:
-                logger.warning("wxautox4 license 检查失败")
+            logger.info("已加载 wxautox4 包")
         except ImportError as e:
             logger.error(f"无法导入 wxautox4 包: {e}")
-            raise ImportError("请确保已安装 wxautox4 包")
+            raise ImportError("请确保已安装 wxautox4 包: pip install wxautox4")
 
     @property
     def package(self) -> Any:
@@ -82,6 +79,13 @@ class WxPackageManager:
             "好友申请管理",
             "页面切换",
             "在线状态检查",
+            "获取会话列表",
+            "获取历史消息",
+            "获取群聊列表",
+            "获取好友列表",
+            "获取我的信息",
+            "添加好友",
+            "朋友圈功能",
             "高级参数配置",
             "日志系统"
         ]
@@ -114,4 +118,4 @@ def get_wx_function(function_name: str) -> Any:
 
 def get_supported_features() -> List[str]:
     """获取支持的功能列表"""
-    return wx_manager.get_supported_features() 
+    return wx_manager.get_supported_features()

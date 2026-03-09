@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-03-09T13:40:36.062268",
+  "function": "_get_session",
+  "error_type": "AttributeError",
+  "error_message": "'NoneType' object has no attribute 'GetSession'",
+  "traceback": "Traceback (most recent call last):\n  File \"G:\\Files\\Home\\20260309skill\\wxauto-restful-api\\app\\utils\\error_handler.py\", line 155, in sync_wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\Files\\Home\\20260309skill\\wxauto-restful-api\\app\\services\\wechat_service.py\", line 666, in _get_session\n    result = wx.GetSession()\n             ^^^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'GetSession'\n",
+  "extra_info": {
+    "args": "()",
+    "kwargs": "{}",
+    "function_module": "app.services.wechat_service",
+    "function_name": "_get_session"
+  }
+}

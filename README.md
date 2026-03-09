@@ -1,36 +1,24 @@
-# wxauto API
+# wxautox4 API
 
-这是一个基于FastAPI开发的HTTP API服务，用于适配wxauto的自动化操作。该服务提供了微信自动化操作的RESTful API接口，支持消息发送、群管理、好友管理等功能。
+这是一个基于FastAPI开发的HTTP API服务，用于适配wxautox4的自动化操作。该服务提供了微信自动化操作的RESTful API接口，支持消息发送、群管理、好友管理等全部功能。
 
 ## 功能特性
 
 - 微信消息发送与接收
 - 群聊管理
 - 好友管理
-- 应用管理
 - 统一的认证机制
 - 标准化的API响应格式
 - 灵活的配置管理
-- **支持wxauto和wxautox两个版本**
+- **全面支持wxautox4的所有功能**
+- **完整的功能覆盖** - 会话管理、消息监听、朋友圈、好友管理等
 
-## 包版本支持
+## 技术栈
 
-本项目支持同时使用 `wxauto`（开源免费版）和 `wxautox`（闭源收费版）两个版本：
-
-| 功能 | wxauto | wxautox |
-|------|--------|---------|
-| 基础消息发送 | ✅ | ✅ |
-| 文件发送 | ✅ | ✅ |
-| 聊天窗口切换 | ✅ | ✅ |
-| 获取子窗口 | ✅ | ✅ |
-| 获取消息 | ✅ | ✅ |
-| 监听聊天 | ✅ | ✅ |
-| 获取新消息 | ✅ | ✅ |
-| 引用消息 | ✅ | ✅ |
-| URL卡片发送 | ❌ | ✅ |
-| 好友申请管理 | ❌ | ✅ |
-| 页面切换 | ❌ | ✅ |
-
+- **wxautox4** - 微信自动化基础库
+- **FastAPI** - 现代化的Python Web框架
+- **Pydantic** - 数据验证和设置管理
+- **SQLite** - 数据存储（可配置其他数据库）
 
 ## 项目结构
 
@@ -42,27 +30,36 @@ wxauto-restful-api/
 │   ├── models/           # 数据模型
 │   ├── services/         # 业务逻辑
 │   ├── utils/            # 工具函数
-│   │   ├── wx_package_manager.py  # wx包管理器
-│   │   └── route_condition.py     # 条件路由装饰器
-│   └── run.py            # 启动脚本
-├── config.yaml           # 主配置文件
-├── check_config.py       # 配置检查脚本
-├── WX_PACKAGE_GUIDE.md   # 包配置指南
-└── schemas.json          # API模式定义
+│   │   └── wx_package_manager.py   # wxautox4包管理器
+│   └── main.py           # 应用入口
+├── config.yaml            # 主配置文件
+├── run.py                 # 启动脚本
+├── requirements.txt       # 项目依赖
+└── schemas.json          # API模式定义（可选）
 ```
 
-### 安装对应包
+### 安装依赖
 
 ```bash
-# 使用 wxauto
-pip install wxauto
+# 安装wxautox4
+pip install wxautox4
 
-# 或使用 wxautox
-pip install wxautox
+# 或使用requirements.txt
+pip install -r requirements.txt
 ```
 
 > [!NOTE]
-> wxautox为Plus版本，具体可了解[Plus版本](https://plus.wxauto.org/plus)
+> 本项目专门为wxautox4设计，需要wxautox4 Plus版本
+
+> [!IMPORTANT]
+> **激活要求**：wxautox4需要激活后才能使用。请先使用以下方式激活：
+> ```bash
+> # 检查激活状态
+> wxautox4 -k
+>
+> # 激活
+> wxautox4 -a your-activation-code
+> ```
 
 ## 配置管理
 
@@ -70,32 +67,28 @@ pip install wxautox
 项目使用 `config.yaml` 作为主配置文件，所有服务器设置都通过此文件管理：
 
 ```yaml
-package: "wxauto"  # 指定使用的包版本
-
 server:
   host: "0.0.0.0"  # 服务器监听地址
   port: 8000       # 服务器监听端口
   reload: true     # 是否启用热重载
-```
 
-### 修改配置
-1. 编辑 `config.yaml` 文件
-2. 修改所需的配置项（如端口号、包版本）
-3. 重启服务使配置生效
+auth:
+  token: "your-secret-token-here"  # API认证密钥
+
+database:
+  type: "sqlite"  # 数据库类型
+  sqlite:
+    path: "./data/wxautox.db"  # SQLite数据库路径
+```
 
 ### 手动模式
 ```bash
 # 启动服务（使用配置文件中的设置）
-run.bat
-
-# 或手动启动
 python run.py
+
+# 或使用uvicorn直接启动
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-
-### Dify调用wxauto
-
-1. 修改`schemas.json`中的servers - url中的服务地址，改为你的实际地址
-2. Dify添加自定义工具，将`schemas.json`输入自定义工具
 
 ## API文档
 
@@ -107,28 +100,49 @@ python run.py
 
 ## API接口
 
-### 基础接口（两个版本都支持）
+### 微信功能接口
 
+#### 会话管理
+- `POST /v1/wechat/getsession` - 获取会话列表
+- `POST /v1/wechat/getsubwindow` - 获取指定子窗口
+- `POST /v1/wechat/getallsubwindow` - 获取所有子窗口
+
+#### 消息功能
 - `POST /v1/wechat/send` - 发送消息
 - `POST /v1/wechat/sendfile` - 发送文件
-- `POST /v1/wechat/chatwith` - 切换聊天窗口
-- `POST /v1/wechat/getallsubwindow` - 获取所有子窗口
-- `POST /v1/wechat/getallmessage` - 获取所有消息
-- `POST /v1/wechat/addlistenchat` - 添加监听聊天
-- `POST /v1/wechat/getnextnewmessage` - 获取下一个新消息
-
-### wxautox特有接口
-
 - `POST /v1/wechat/sendurlcard` - 发送URL卡片
+- `POST /v1/wechat/getallmessage` - 获取当前窗口消息
+- `POST /v1/wechat/gethistorymessage` - 获取历史消息
+
+#### 监听功能
+- `POST /v1/wechat/addlistenchat` - 添加监听
+- `POST /v1/wechat/removelistenchat` - 移除监听
+- `POST /v1/wechat/getnextnewmessage` - 获取新消息
+
+#### 好友管理
 - `POST /v1/wechat/getnewfriends` - 获取好友申请
 - `POST /v1/wechat/newfriend/accept` - 接受好友申请
+- `POST /v1/wechat/addnewfriend` - 添加新好友
+- `POST /v1/wechat/getfriends` - 获取好友列表
+
+#### 群聊管理
+- `POST /v1/wechat/getrecentgroups` - 获取群聊列表
+
+#### 页面控制
+- `POST /v1/wechat/chatwith` - 切换聊天窗口
 - `POST /v1/wechat/switch/chat` - 切换到聊天页面
+- `POST /v1/wechat/switch/contact` - 切换到联系人页面
 
-### 信息接口
+#### 朋友圈功能
+- `POST /v1/wechat/moments` - 进入朋友圈
+- `POST /v1/wechat/publishmoment` - 发送朋友圈
 
+#### 账号信息
+- `POST /v1/wechat/getmyinfo` - 获取我的信息
+- `POST /v1/wechat/isonline` - 检查在线状态
+
+### 系统接口
 - `GET /v1/info/package` - 获取包信息
-- `GET /v1/info/features` - 获取支持功能
-- `GET /v1/info/status` - 获取服务状态
 
 ## 认证
 
@@ -151,21 +165,15 @@ Authorization: Bearer <your-token>
 ## 配置说明
 
 ### 主要配置文件
-- `config.yaml` - 主配置文件（包含所有服务器设置和包版本）
+- `config.yaml` - 主配置文件（包含所有服务器设置）
 - `pyproject.toml` - 项目依赖配置
 
 ### 重要配置项
-- `package` - 指定使用的包版本（wxauto/wxautox）
 - `server.port` - 服务端口（默认8000）
 - `server.host` - 服务器监听地址（默认0.0.0.0）
 - `server.reload` - 热重载开关（默认true）
 - `auth.token` - API访问令牌
-- `wechat.app_path` - 微信安装路径
 - `database.type` - 数据库类型（默认sqlite）
-
-### 配置优先级
-1. `config.yaml` 文件中的设置
-2. 代码中的默认值
 
 ## 开发说明
 
@@ -175,19 +183,16 @@ Authorization: Bearer <your-token>
 - 统一的错误处理机制
 - 详细的API文档
 - 灵活的配置管理
-- **动态包导入系统**
-- **条件路由系统**
 
 ## 注意事项
 
-- 请确保wxauto已正确安装并配置
-- 建议在开发环境中使用
+- 请确保wxautox4已正确安装并激活
+- 建议在开发环境中使用，生产环境请注意安全配置
 - 注意保护API访问token
 - 定期检查日志文件
 - 服务部署需要管理员权限
-- **重要**：所有端口配置都通过 `config.yaml` 文件管理，批处理脚本不再硬编码端口
-- **包版本兼容性**：确保安装的包版本与代码兼容
-- **功能差异**：注意两个版本的功能差异
+- **重要**：wxautox4需要激活后才能使用
+- **方法名**：wxautox4使用大写驼峰命名（如 `SendMsg`）
 
 ## 许可证
 
