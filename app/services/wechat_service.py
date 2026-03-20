@@ -8,6 +8,7 @@ from app.services.operation_queue import OperationQueue
 from app.services.executor import UIOperationExecutor
 from app.utils.error_handler import handle_service_error
 from .init import WeChat, WxClient, Chat, HumanMessage, safe_initialize_wechat
+import time
 
 
 class WeChatNotInitializedError(Exception):
@@ -164,6 +165,33 @@ def get_raw_messages(msgs, chat_info):
     # result['msg'] = raw_msgs
     return raw_msgs
 
+def safe_switch_chat(wx, target: str, max_retries: int = 3) -> bool:
+    for attempt in range(max_retries):
+        try:
+            wx.ChatWith(who=target)
+            time.sleep(0.5)
+            if wx.ChatInfo().get('chat_name') == target:
+                return True
+        except Exception as e:
+            print(f"发送失败 ({attempt+1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(1)
+    return False
+
+def safe_send_msg(wx, target: str, msg: str, max_retries: int = 3) -> bool:
+    for attempt in range(max_retries):
+        try:
+            wx.ChatWith(who=target)
+            time.sleep(0.5)
+            if wx.ChatInfo().get('chat_name') == target:
+                result = wx.SendMsg(msg=msg)
+                return True
+        except Exception as e:
+            print(f"发送失败 ({attempt+1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(1)
+    return False
+
 
 class WeChatService:
     """WeChat服务类，使用队列执行所有操作以保证线程安全"""
@@ -210,7 +238,8 @@ class WeChatService:
                     }
                 )
 
-            result = wx.SendMsg(msg=msg, who=who, clear=clear, at=at, exact=exact)
+            # result = wx.SendMsg(msg=msg, who=who, clear=clear, at=at, exact=exact)
+            result = safe_send_msg(wx, target=who, msg=msg)
             message = result.get('message') or '操作成功'
             return APIResponse(success=bool(result), message=message, data=result.get('data'))
 
@@ -228,7 +257,8 @@ class WeChatService:
     ) -> APIResponse:
         """发送消息（同步接口）"""
         wx = get_wechat(wxname)
-        result = wx.SendMsg(msg=msg, who=who, clear=clear, at=at, exact=exact)
+        # result = wx.SendMsg(msg=msg, who=who, clear=clear, at=at, exact=exact)
+        result = safe_send_msg(wx, target=who, msg=msg)
         message = result.get('message') or '操作成功'
         return APIResponse(success=bool(result), message=message, data=result.get('data'))
 
@@ -321,7 +351,7 @@ class WeChatService:
             from app.utils.response_builder import single_object, error
 
             wx = get_wechat(wxname)
-            result = wx.ChatWith(who=who, exact=exact)
+            result = safe_switch_chat(wx, target=who)
             if result:
                 return single_object(
                     obj={"name": result, "type": "unknown"},
@@ -343,7 +373,7 @@ class WeChatService:
         from app.utils.response_builder import single_object, error
 
         wx = get_wechat(wxname)
-        result = wx.ChatWith(who=who, exact=exact)
+        result = safe_switch_chat(wx, target=who)
         if result:
             return single_object(
                 obj={"name": result, "type": "unknown"},
@@ -393,7 +423,7 @@ class WeChatService:
 
             wx = get_wechat(wxname)
             if who:
-                if not wx.ChatWith(who):
+                if not safe_switch_chat(wx, target=who):
                     return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
             msgs = wx.GetAllMessage()
             chat_info = wx.ChatInfo()
@@ -414,7 +444,7 @@ class WeChatService:
 
         wx = get_wechat(wxname)
         if who:
-            if not wx.ChatWith(who):
+            if not safe_switch_chat(wx, target=who):
                 return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
         chat_info = wx.ChatInfo()
         msgs = wx.GetAllMessage()
@@ -831,7 +861,7 @@ class WeChatService:
 
             wx = get_wechat(wxname)
             # 先切换到指定聊天窗口
-            if not wx.ChatWith(who=who):
+            if not safe_switch_chat(wx, target=who):
                 return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
             # 获取历史消息
             msgs = wx.GetHistoryMessage(n=n)
@@ -853,7 +883,7 @@ class WeChatService:
 
         wx = get_wechat(wxname)
         # 先切换到指定聊天窗口
-        if not wx.ChatWith(who=who):
+        if not safe_switch_chat(wx, target=who):
             return error(message='找不到聊天窗口', error_code='CHAT_NOT_FOUND')
         # 获取历史消息
         msgs = wx.GetHistoryMessage(n=n)
