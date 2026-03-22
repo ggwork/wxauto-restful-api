@@ -128,7 +128,8 @@ class ServiceManager:
             "port": port,
             "pid": pid,
             "start_time": datetime.now().isoformat(),
-            "status": "running"
+            "status": "running",
+            "service_dir": str(Path(__file__).resolve().parent.parent.parent)
         }
 
         if additional_info:
