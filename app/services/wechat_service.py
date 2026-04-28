@@ -178,13 +178,26 @@ def safe_switch_chat(wx, target: str, max_retries: int = 3) -> bool:
                 time.sleep(1)
     return False
 
-def safe_send_msg(wx, target: str, msg: str, max_retries: int = 3) -> bool:
+def safe_send_msg(wx, target: str, msg: str, at: Optional[str | list] = None, clear: bool = True, max_retries: int = 3) -> bool:
+    """安全发送消息，确保发送给正确的联系人
+
+    Args:
+        wx: 微信实例
+        target: 发送对象
+        msg: 消息内容
+        at: @对象，不指定则不@任何人
+        clear: 发送后是否清空编辑框
+        max_retries: 最大重试次数
+
+    Returns:
+        bool: 是否发送成功
+    """
     for attempt in range(max_retries):
         try:
             wx.ChatWith(who=target)
             time.sleep(0.5)
             if wx.ChatInfo().get('chat_name') == target:
-                result = wx.SendMsg(msg=msg)
+                result = wx.SendMsg(msg=msg, at=at, clear=clear)
                 return True
         except Exception as e:
             print(f"发送失败 ({attempt+1}/{max_retries}): {e}")
@@ -239,7 +252,7 @@ class WeChatService:
                 )
 
             # result = wx.SendMsg(msg=msg, who=who, clear=clear, at=at, exact=exact)
-            result = safe_send_msg(wx, target=who, msg=msg)
+            result = safe_send_msg(wx, target=who, msg=msg, at=at, clear=clear)
             if result:
                 return APIResponse(success=True, message='发送成功')
             else:
@@ -259,7 +272,7 @@ class WeChatService:
         """发送消息（同步接口）"""
         wx = get_wechat(wxname)
         # result = wx.SendMsg(msg=msg, who=who, clear=clear, at=at, exact=exact)
-        result = safe_send_msg(wx, target=who, msg=msg)
+        result = safe_send_msg(wx, target=who, msg=msg, at=at, clear=clear)
         if result:
             return APIResponse(success=True, message='发送成功')
         else:
