@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import threading
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Type, TypeVar, Tuple, Union
 from app.models.base import BaseDBModel, BaseDatabase, QueryParams, QueryResult
@@ -8,8 +9,8 @@ from app.utils.config import settings
 T = TypeVar('T', bound=BaseDBModel)
 
 class SQLiteDatabase(BaseDatabase):
-    """SQLite数据库实现"""
-    
+    """SQLite数据库实现（线程安全）"""
+
     def __init__(self) -> None:
         """初始化SQLite数据库连接"""
         # 获取数据库文件的绝对路径
@@ -20,8 +21,18 @@ class SQLiteDatabase(BaseDatabase):
             os.makedirs(self.db_dir)
         # 更新配置中的路径为绝对路径
         settings.database.sqlite.path = self.db_path
+        # 使用线程本地存储，每个线程有独立的连接
+        self._local = threading.local()
         # 调用父类初始化
         super().__init__(settings.database.sqlite)
+
+    @property
+    def conn(self):
+        """获取当前线程的数据库连接"""
+        if not hasattr(self._local, 'connection') or self._local.connection is None:
+            self._local.connection = sqlite3.connect(self.db_path)
+            self._local.connection.row_factory = sqlite3.Row
+        return self._local.connection
     
     def connect(self) -> None:
         """建立数据库连接"""
@@ -34,17 +45,18 @@ class SQLiteDatabase(BaseDatabase):
                 # 创建一个空的数据库文件
                 with open(self.db_path, 'w') as f:
                     pass
-            self.conn = sqlite3.connect(self.db_path)
-            self.conn.row_factory = sqlite3.Row
+            # 通过 conn 属性访问会自动创建线程本地连接
+            _ = self.conn
         except sqlite3.Error as e:
             raise Exception(f"无法连接到数据库: {str(e)}")
         except Exception as e:
             raise Exception(f"创建数据库文件失败: {str(e)}")
-    
+
     def disconnect(self) -> None:
-        """关闭数据库连接"""
-        if hasattr(self, 'conn'):
-            self.conn.close()
+        """关闭当前线程的数据库连接"""
+        if hasattr(self._local, 'connection') and self._local.connection is not None:
+            self._local.connection.close()
+            self._local.connection = None
     
     def create_table(self, table_name: str, fields: Dict[str, str]) -> None:
         """创建表
