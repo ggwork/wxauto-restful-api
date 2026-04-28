@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Annotated
 from fastapi import APIRouter, UploadFile, File, Form, Depends
 from app.models.response import APIResponse
 from app.models.file import FileInfo, FileUploadResponse
@@ -16,10 +16,10 @@ file_service = FileService()
     summary="上传文件"
 )
 async def upload_file(
-    file: UploadFile = File(...),
-    description: Optional[str] = Form(None),
-    uploader: Optional[str] = Form(None),
-    token: str = Depends(get_current_token)
+    token: str = Depends(get_current_token),
+    file: Annotated[UploadFile, File(description="要上传的文件")] = ...,
+    description: Annotated[Optional[str], Form(description="文件描述")] = None,
+    uploader: Annotated[Optional[str], Form(description="上传者")] = None
 ) -> APIResponse:
     """上传文件
 

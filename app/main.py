@@ -32,6 +32,15 @@ def custom_openapi():
         routes=app.routes,
     )
     openapi_schema["openapi"] = "3.0.3"
+
+    # 修复文件上传接口的 schema，确保 Swagger UI 正确识别文件字段
+    if "components" in openapi_schema and "schemas" in openapi_schema["components"]:
+        for schema_name, schema_def in openapi_schema["components"]["schemas"].items():
+            if "Body_upload_file" in schema_name:
+                if "properties" in schema_def and "file" in schema_def["properties"]:
+                    # 添加 format: binary 让 Swagger UI 显示文件上传控件
+                    schema_def["properties"]["file"]["format"] = "binary"
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
